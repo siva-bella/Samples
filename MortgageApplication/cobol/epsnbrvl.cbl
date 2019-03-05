@@ -104,7 +104,7 @@
            END-PERFORM.
 
       * FIND LEADING SPACES
-           MOVE 1 TO WS-LEADING-SPACES.
+           MOVE 2 TO WS-LEADING-SPACES.
 
            IF WS-END-SPACE NOT = 0
               MOVE 1 TO WS-IDX
