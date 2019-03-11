@@ -1,4 +1,3 @@
-@groovy.transform.BaseScript com.ibm.dbb.groovy.ScriptLoader baseScript
 import com.ibm.dbb.build.*
 import com.ibm.dbb.repository.*
 import com.ibm.dbb.dependency.*
@@ -7,19 +6,19 @@ import groovy.time.*
 
 /**
  * This script identifies which programs are impacted from source code changes since the last
- * successful MortgageApplication build. The result of the script is the generation of a build list text 
- * file in the workDir called buildList.txt i.e. ${workDir}/buildList.txt which contains the programs 
- * that need to be rebuilt. The build list file can be used as the buildFile argument for invoking the 
+ * successful MortgageApplication build. The result of the script is the generation of a build list text
+ * file in the workDir called buildList.txt i.e. ${workDir}/buildList.txt which contains the programs
+ * that need to be rebuilt. The build list file can be used as the buildFile argument for invoking the
  * MortgageApplication build.groovy script.
  *
- * If the --buildHash option is omitted or if no previous successful MortgageApplication build exists with a 
- * buildHash property, the contents of MortgageApplication/build/files.txt will be copied to ${workDir}/buildList.txt 
+ * If the --buildHash option is omitted or if no previous successful MortgageApplication build exists with a
+ * buildHash property, the contents of MortgageApplication/build/files.txt will be copied to ${workDir}/buildList.txt
  * resulting in a full build.
  *
  * usage:  impacts.groovy [options]
  *
  *  **NOTE - MortgageApplication/build/build.properties will be loaded (if exists) at script startup.
- *           The options listed below can be used to override the build.properties values. 
+ *           The options listed below can be used to override the build.properties values.
  *
  * options:
  *  -b,--buildHash <hash>         Git commit hash for the build
@@ -32,7 +31,7 @@ import groovy.time.*
  *  -w,--workDir <dir>            Absolute path to the build output directory
  *
  */
- 
+
 // load the Tools.groovy utility script
 def tools = loadScript(new File("Tools.groovy"))
 def scriptDir = getScriptDir()
@@ -49,13 +48,13 @@ println("** Impact analysis start at $properties.startTime")
 
 // create workdir (if necessary)
 new File(properties.workDir).mkdirs()
-   
+
 // if buildHash argument omitted, then just copy MortgageApplication/build/files.txt to buildlist and exit
 if (properties.buildHash == null) {
     println("** Git commit build hash option (--buildHash) omitted.  Copying $scriptDir/files.txt to $properties.workDir/buildlist.txt")
     Files.copy(Paths.get("$scriptDir/files.txt"), Paths.get("$properties.workDir/buildList.txt"))
 	System.exit(0)
-}    
+}
 
 // get the last successful build's buildHash
 println("** Searching for last successful build commit hash for build group $properties.collection")
@@ -63,14 +62,14 @@ def lastBuildHash = null
 def repositoryClient = tools.getDefaultRepositoryClient()
 def lastBuildResult = repositoryClient.getLastBuildResult(properties.collection, BuildResult.COMPLETE, BuildResult.CLEAN)
 if (lastBuildResult)
-    lastBuildHash = lastBuildResult.getProperty("buildHash")                  
+    lastBuildHash = lastBuildResult.getProperty("buildHash")
 
 // if no lastBuildHash, then just copy MortgageApplication/build/files.txt to buildlist and exit
 if (lastBuildHash == null) {
     println("Could not locate last successful build commit hash for build group $properties.collection.  Copying $scriptDir/files.txt to $properties.workDir/buildlist.txt")
     Files.copy(Paths.get("$scriptDir/files.txt"), Paths.get("$properties.workDir/buildList.txt"))
 	System.exit(0)
-}  
+}
 else {
 	println("Last successful build commit hash located. label : ${lastBuildResult.getLabel()} , buildHash : $lastBuildHash")
 }
@@ -91,9 +90,9 @@ if (err.size() > 0) {
 	System.exit(1)
 }
 def changedFiles = out.readLines()
-println("Number of changed files detected since build ${lastBuildResult.getLabel()} : ${changedFiles.size()}")  
+println("Number of changed files detected since build ${lastBuildResult.getLabel()} : ${changedFiles.size()}")
 println(out)
-      
+
 // if no changed files, created empty build list file and exit
 if (changedFiles.size() == 0) {
 	println("** No changed files detected since last successful build.  Creating empty file $properties.workDir/buildlist.txt")
@@ -115,13 +114,13 @@ changedFiles.each { file ->
 println("** Store the dependency data in repository collection '$properties.collection'")
 // create collection if needed
 if (!repositoryClient.collectionExists(properties.collection))
-   	repositoryClient.createCollection(properties.collection) 
-   	   
+   	repositoryClient.createCollection(properties.collection)
+   	
 repositoryClient.saveLogicalFiles(properties.collection, logicalFiles);
 println(repositoryClient.getLastStatus())
 
 
-// resolve impacted programs/files for changed files  
+// resolve impacted programs/files for changed files
 println("** Creating build list by resolving impacted programs/files for changed files")
 def buildList = [] as Set<String>
 changedFiles.each { changedFile ->
