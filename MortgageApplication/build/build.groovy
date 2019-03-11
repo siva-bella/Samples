@@ -1,4 +1,3 @@
-@groovy.transform.BaseScript com.ibm.dbb.groovy.ScriptLoader baseScript
 import com.ibm.dbb.build.*
 import com.ibm.dbb.build.report.*
 import com.ibm.dbb.repository.*
@@ -9,16 +8,16 @@ import groovy.time.*
  * This is the main build script for the Mortgage Application.
  *
  * usage: build.groovy [options] buildfile
- * 
+ *
  * buildFile:  Relative path (from sourceDir) of the file to build. If file
  * is *.txt then assumed to be buildlist file containing a list of relative
  * path files to build. Build list file can be absolute or relative (from
  * sourceDir) path.
- * 
+ *
  * options:
  *  -b,--buildHash <hash>         Git commit hash for the build
  *  -c,--collection <name>        Name of the dependency data collection
- *  -C, --clean                   Deletes the dependency collection and build result group 
+ *  -C, --clean                   Deletes the dependency collection and build result group
  *                                from the DBB repository then terminates (skips build)
  *  -e,--logEncoding <encoding>   Encoding of output logs. Default is EBCDIC
  *  -E,--errPrefix <uniqueId>     Unique id used for IDz error message datasets
@@ -32,23 +31,26 @@ import groovy.time.*
  *  -t,--team <hlq>               Team build hlq for user build syslib concatenations
  *  -u,--userBuild                Flag indicating running a user build
  *  -w,--workDir <dir>            Absolute path to the build output directory
- *  
+ *
  * All command line options can be set in the MortgageApplication/build/build.properties file
  * that is loaded at the beginning of the build. Use the argument long form name for the property's
- * name. The properties in build.properties are used as default property values and can be 
+ * name. The properties in build.properties are used as default property values and can be
  * overridden by command line options.
  */
- 
+
 // load the Tools.groovy utility script
-def tools = loadScript(new File("Tools.groovy"))
+def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+File sourceFile = new File("$scriptDir/Tools.groovy")
+Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile)
+GroovyObject tools = (GroovyObject) groovyClass.newInstance()
 
 // parse command line arguments and load build properties
 def usage = "build.groovy [options] buildfile"
 def opts = tools.parseArgs(args, usage)
 def properties = tools.loadProperties(opts)
 tools.validateRequiredProperties(["sourceDir", "workDir", "hlq"])
-if (!properties.userBuild) 
-	tools.validateRequiredProperties(["dbb.RepositoryClient.url", "dbb.RepositoryClient.userId", "password", "collection"])
+if (!properties.userBuild)
+	tools.validateRequiredProperties(["repo", "id", "password", "collection"])
 
 def startTime = new Date()
 properties.startTime = startTime.format("yyyyMMdd.hhmmss.mmm")
@@ -68,11 +70,11 @@ tools.createDatasets()
 def buildList = tools.getBuildList(opts.arguments())
 
 // scan all the files in the process list for dependency data (team build only)
-if (!properties.userBuild && buildList.size() > 0) { 
+if (!properties.userBuild && buildList.size() > 0) {
 	// create collection if needed
 	def repositoryClient = tools.getDefaultRepositoryClient()
 	if (!repositoryClient.collectionExists(properties.collection))
-    	repositoryClient.createCollection(properties.collection) 
+    	repositoryClient.createCollection(properties.collection)
     	
 	println("** Scan the build list to collect dependency data")
 	def scanner = new DependencyScanner()
@@ -86,7 +88,7 @@ if (!properties.userBuild && buildList.size() > 0) {
     	if (logicalFiles.size() == 500) {
     		println("** Storing ${logicalFiles.size()} logical files in repository collection '$properties.collection'")
  			repositoryClient.saveLogicalFiles(properties.collection, logicalFiles);
-			println(repositoryClient.getLastStatus())  
+			println(repositoryClient.getLastStatus())
 			logicalFiles.clear() 		
     	}
 	}
@@ -101,17 +103,18 @@ if (buildList.size() == 0)
 	println("** No files in build list.  Nothing to build.")
 else {
 	// build programs by invoking the appropriate build script
-	def buildOrder = ["BMSProcessing", "Compile", "CobolCompile", "LinkEdit"]
+	def buildOrder = ["BMSProcessing", "Compile", "LinkEdit", "CobolCompile"]
 	// optionally execute IMS MFS builds
-	if (properties.BUILD_MFS.toBoolean()) 
+	if (properties.BUILD_MFS.toBoolean())
 		buildOrder << "MFSGENUtility"
 
 	println("** Invoking build scripts according to build order: ${buildOrder[1..-1].join(', ')}")
 	buildOrder.each { script ->
     	// Use the ScriptMappings class to get the files mapped to the build script
 		def buildFiles = ScriptMappings.getMappedList(script, buildList)
+		def scriptName = "$properties.sourceDir/MortgageApplication/build/${script}.groovy"
 		buildFiles.each { file ->
-			runScript(new File("${script}.groovy"), ["file":file])
+	    	run(new File(scriptName), [file] as String[])
 			processCounter++
 		}
 	}
