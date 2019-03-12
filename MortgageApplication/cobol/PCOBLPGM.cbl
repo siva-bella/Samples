@@ -26,7 +26,7 @@
                                                                         00260003
         01  EMP-FILE-EOD  PIC X(02) VALUE  SPACES.                      00270006
         01  EMP-RECS-CNT  PIC 9(02).
-        copy recstruc.                                                  00280003
+        COPY RECSTRUC.                                                  00280003
       *                                                                 00290000
       *  01 EMP-HEADER.                                                 00300035
       *    05 EMP-NAME    PIC X(10) VALUE  'EMP NAME'.                  00310037
