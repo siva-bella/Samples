@@ -101,9 +101,10 @@
            MOVE DESIG     TO D-DESIG
            MOVE PSKILL    TO D-PSKILL
            MOVE EXP       TO D-EXP
-      ****  WRITE EMP-REPT-REC.                                         00930039
+           MOVE EMP-DTL   TO EMP-REPT-REC
+           WRITE EMP-REPT-REC.                                          00930039
            WRITE EMP-DTL.                                               00940039
-      ***  INITIALIZE EMP-REPT-REC
+           INITIALIZE EMP-REPT-REC
            INITIALIZE EMP-DTL                                           00950039
            ADD 1 TO EMP-RECS-CNT.                                       00960039
            READ EMP-FILE                                                00970039
