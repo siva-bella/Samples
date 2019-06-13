@@ -49,9 +49,9 @@
             05 WS-D-52     PIC X(01) VALUE  '|'.                        00480039
             05 D-PSKILL      PIC X(15) VALUE  'PRIMARY SKILL'.          00490040
             05 WS-D-62     PIC X(01) VALUE  '|'.                        00500040
-            05 D-EXP         PIC X(10) VALUE  'EXPERIENCE'.             00510040
-           05 WS-D-72     PIC X(01) VALUE  '|'.                         00520040
-            05 WS-FILLER1  PIC X(52) VALUE SPACES.                      00530040
+      *     05 D-EXP         PIC X(10) VALUE  'EXPERIENCE'.             00510040
+      *     05 WS-D-72     PIC X(01) VALUE  '|'.                        00520040
+            05 WS-FILLER1  PIC X(30) VALUE SPACES.                      00530040
          01 EMP-TRL.                                                    00540022
             05 TOTAL-READ PIC 9(02).                                    00550023
             05 WS-SPACE  PIC X(01) VALUE SPACES.                        00560041
