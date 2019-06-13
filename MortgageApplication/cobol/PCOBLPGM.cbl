@@ -68,7 +68,7 @@
       *    INITIALIZE EMP-REPT-REC.                                     00670033
       *                                                                 00680021
 
-           DISPLAY 'Today is JUNE122019 WEDNES Demo run-02'             00690028
+           DISPLAY 'Today is JUNE122019 WEDNES Demo run-03'             00690028
            OPEN INPUT EMP-FILE                                          00700034
                 OUTPUT EMP-REPT.                                        00710034
            MOVE ZEROES TO EMP-RECS-CNT.                                 00720034
