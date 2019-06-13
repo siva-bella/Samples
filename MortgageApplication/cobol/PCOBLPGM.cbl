@@ -95,10 +95,16 @@
                                                                         00890039
            MOVE EMP-REC      TO  EMP-DTL .                              00900039
                                                                         00910039
-           MOVE EMP-DTL(1:34) TO  EMP-REPT-REC.                         00920040
-           WRITE EMP-REPT-REC.                                          00930039
-                                                                        00940039
-           INITIALIZE EMP-REPT-REC                                      00950039
+      ****  MOVE EMP-DTL(1:34) TO  EMP-REPT-REC.                         00920040
+           MOVE EMP-NAME  TO D-EMP-NAME
+           MOVE DEPART-CD TO D-DEPART-CD
+           MOVE DESIG     TO D-DESIG
+           MOVE PSKILL    TO D-PSKILL
+           MOVE EXP       TO D-EXP
+      ****  WRITE EMP-REPT-REC.                                          00930039
+           WRITE EMP-DTL.                                                            00940039
+      ***  INITIALIZE EMP-REPT-REC
+           INITIALIZE EMP-DTL                                                            00950039
            ADD 1 TO EMP-RECS-CNT.                                       00960039
            READ EMP-FILE                                                00970039
             AT END MOVE 'NO' TO EMP-FILE-EOD                            00980039
