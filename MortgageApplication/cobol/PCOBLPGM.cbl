@@ -68,7 +68,7 @@
       *    INITIALIZE EMP-REPT-REC.                                     00670033
       *                                                                 00680021
 
-           DISPLAY 'Today is JUNE122019 WEDNES Demo run-03'             00690028
+           DISPLAY 'Today is JUNE122019 WEDNES Demo run-04'             00690028
            OPEN INPUT EMP-FILE                                          00700034
                 OUTPUT EMP-REPT.                                        00710034
            MOVE ZEROES TO EMP-RECS-CNT.                                 00720034
@@ -95,17 +95,12 @@
                                                                         00890039
            MOVE EMP-REC      TO  EMP-DTL .                              00900039
                                                                         00910039
-      ****  MOVE EMP-DTL(1:34) TO  EMP-REPT-REC.                        00920040
-           MOVE EMP-NAME  TO D-EMP-NAME
-           MOVE DEPART-CD TO D-DEPART-CD
-           MOVE DESIG     TO D-DESIG
-           MOVE PSKILL    TO D-PSKILL
-           MOVE EXP       TO D-EXP
-           MOVE EMP-DTL   TO EMP-REPT-REC
+           MOVE EMP-DTL(1:34) TO  EMP-REPT-REC.                         00920040
+
            WRITE EMP-REPT-REC.                                          00930039
-           WRITE EMP-DTL.                                               00940039
+                                                                        00940039
            INITIALIZE EMP-REPT-REC
-           INITIALIZE EMP-DTL                                           00950039
+                                                                        00950039
            ADD 1 TO EMP-RECS-CNT.                                       00960039
            READ EMP-FILE                                                00970039
             AT END MOVE 'NO' TO EMP-FILE-EOD                            00980039
