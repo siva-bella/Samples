@@ -68,7 +68,7 @@
       *    INITIALIZE EMP-REPT-REC.                                     00670033
       *                                                                 00680021
 
-           DISPLAY 'Today is JUNE132019 Thusrday Demo run-03'
+           DISPLAY 'Today is JUNE132019 Thusrday Demo run-04'
            DISPLAY 'APPOPS DEMO RUN'
                                                                         00690028
            OPEN INPUT EMP-FILE                                          00700034
